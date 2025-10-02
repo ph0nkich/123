@@ -8,29 +8,41 @@
 import SwiftUI
 
 struct ContentView: View {
-    let emojis = ["👻", "🎃", "🕷️", "😈", "🕸️", "🧙‍♀️", "🙀", "👹", "😱", "☠️", "🍭" ]
+    @State var emojis: [String] = ["☠️", "👹", "🎃", "🧙‍♀️", "☠️", "👹", "🎃", "🧙‍♀️"]
     
-    @State var cardCount: Int = 4
+    @State var cardCount: Int = 8
     
     var body: some View {
         VStack {
+            Text("Memorize!").font(.largeTitle)
             ScrollView {
                 cards
             }
             Spacer()
-            cardCountAdjusters
+            HStack {
+                VStack {
+                    halloweenCard
+                        .font(.largeTitle)
+                    Text("Halloween")
+                        .font(.caption)
+                }
+                Spacer()
+                VStack {
+                    sportCard
+                        .font(.largeTitle)
+                    Text("Sport")
+                        .font(.caption)
+                }
+                Spacer()
+                VStack {
+                    vehiclesCard
+                        .font(.largeTitle)
+                    Text("Vehicles")
+                        .font(.caption)
+                }
+            }
         }
         .padding()
-    }
-    
-    var cardCountAdjusters: some View {
-        HStack {
-            cardRemover
-            Spacer()
-            cardAdder
-        }
-        .imageScale(.large)
-        .font(.largeTitle)
     }
     
     var cards: some View {
@@ -43,26 +55,39 @@ struct ContentView: View {
         .foregroundStyle(.red)
     }
     
-    func cardCountAdjust(by offset: Int, symbol: String) -> some View {
+    func newEmojis(_ new: [String]) {
+        let pairs = new + new
+        let shufflerPairs = pairs.shuffled()
+        emojis = shufflerPairs
+        cardCount = shufflerPairs.count
+    }
+    
+    func theme(wantedEmojis: [String], symbol: String) -> some View {
         Button(action: {
-                cardCount += offset
+            newEmojis(wantedEmojis)
         }, label: {
             Image(systemName: symbol)
         })
-        .disabled(cardCount + offset < 1 || cardCount + offset > emojis.count)
     }
     
-    var cardRemover: some View {
-        cardCountAdjust(by: -1, symbol: "rectangle.stack.badge.minus.fill")
+    var halloweenCard: some View {
+        let halloweenArray: [String] = ["☠️", "👹", "🎃", "🧙‍♀️"]
+        return theme(wantedEmojis: halloweenArray, symbol: "moon.stars")
     }
     
-    var cardAdder: some View {
-        cardCountAdjust(by: +1, symbol: "rectangle.stack.badge.plus.fill")
+    var sportCard: some View {
+        let sportArray: [String] = ["⚽️", "🏀", "🏈", "🎱"]
+        return theme(wantedEmojis: sportArray, symbol: "figure.walk")
+    }
+    
+    var vehiclesCard: some View {
+        let vehiclesArray: [String] = ["🚕", "🚑", "🚓", "🏎️"]
+        return theme(wantedEmojis: vehiclesArray, symbol: "car")
     }
 }
 struct CardView: View {
     var content: String
-    @State var isFaceUp = true
+    @State var isFaceUp = false
     
     var body: some View {
         ZStack {
